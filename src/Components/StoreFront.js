@@ -1,28 +1,89 @@
-import React from "react";
+import React, { useState } from "react";
 import Product from "./Product.js";
-import "../index.css";
 
 export default function StoreFront() {
-  // hardcoded products for this project
-  const products = [
-    {
-      name: "Cheese",
-      description: "200g cheese block",
-      image:
-        "https://res.cloudinary.com/dbfn5lnvx/image/upload/q_auto,w_300/v1580649404/react-tutorial/products/cheese.png",
-    },
-    {
-      name: "Milk",
-      description: "1L of milk",
-      image:
-        "https://res.cloudinary.com/dbfn5lnvx/image/upload/q_auto,w_300/v1580649400/react-tutorial/products/milk.png",
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [validation, setValidation] = useState("");
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+
+    if (!name) {
+      setValidation("Please enter a name");
+      return;
+    }
+    if (!description) {
+      setValidation("Please enter a description");
+      return;
+    }
+    setProducts([
+      ...products,
+      {
+        id: products.length + 1,
+        name: name,
+        description: description,
+      },
+    ]);
+    setName("");
+    setDescription("");
+    setValidation("");
+  }
+
+  function handleDeleteButton(id) {
+    // immutable delete a product. Review this lesson: https://react-tutorial.app/app.html?id=474
+    setProducts(products.filter((product) => product.id !== id));
+  }
+
   return (
-    <div className="store-front">
-      {/* render the two Products here */}
-      <Product details={products[0]} />
-      <Product details={products[1]} />
-    </div>
+    <>
+      <form onSubmit={handleFormSubmit}>
+        <div>
+          <label htmlFor="product-name">Name:</label>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            id="product-name"
+            placeholder="Enter the name"
+            className="textfield"
+          />
+        </div>
+        <div>
+          <label htmlFor="product-description">Description:</label>
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            id="product-description"
+            placeholder="Enter the description"
+            className="textfield"
+          />
+        </div>
+        <div className="form-footer">
+          <div className="validation-message">{validation}</div>
+          <input
+            type="submit"
+            className="btn btn-primary"
+            value="Add product"
+          />
+        </div>
+      </form>
+      <div>{products.length === 0 && <p>Add your first product</p>}</div>
+      <ul className="store-front">
+        {products.map((product) => (
+          <li key={product.id}>
+            <Product details={product} />
+            <button
+              className="btn-outline btn-delete"
+              onClick={() => handleDeleteButton(product.id)}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
