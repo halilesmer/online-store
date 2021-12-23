@@ -18,8 +18,6 @@ export default function Product(props) {
     return null;
   }
 
-  console.log("details", details);
-
   return (
     <div className="product">
       <div className="product-info">
