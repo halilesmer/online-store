@@ -1,18 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
+import useProductCounter from "./useProductCounter";
 
 export default function Product(props) {
-  const [count, setCount] = useState(0);
-
   const { details } = props;
-
-  function handleIncrementClick() {
-    setCount(count + 1);
-  }
-  function handleDecrementClick() {
-    if (count > 0) {
-      setCount(count - 1);
-    }
-  }
+  const {count, increment, decrement } = useProductCounter();
 
   if (!details) {
     return null;
@@ -28,12 +19,12 @@ export default function Product(props) {
         <button
           className="product-sub"
           disabled={count === 0}
-          onClick={handleDecrementClick}
+          onClick={decrement}
         >
           -
         </button>
         <h3 className="product-count">{count ? count : ""}</h3>
-        <button className="product-add" onClick={handleIncrementClick}>
+        <button className="product-add" onClick={increment}>
           +
         </button>
       </div>
