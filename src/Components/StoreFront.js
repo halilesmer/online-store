@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ProductsList from "./ProductsList.js";
 import AddProductForm from "./AddProductForm.js";
+import useFetch from "./useFetch.js";
 
 export default function StoreFront() {
 const [products, setProducts] = useState(() => {
@@ -15,6 +16,7 @@ const [products, setProducts] = useState(() => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [validation, setValidation] = useState("");
+  const { post, loading } = useFetch("https://api.learnjavascript.online/demo/react/admin/");
 
   /* save items to local storage */
   useEffect(() => {
@@ -34,7 +36,34 @@ const [products, setProducts] = useState(() => {
       return;
     }
 
- try{
+    /* get("products.json")
+      .then((data) => setProducts(data))
+      .catch(error => console.error(error))
+      .finally(() => {
+         setName("");
+         setDescription("");
+         setValidation("");
+      }) */
+
+    post("products", {
+      name,
+      description,
+    })
+      .then((data) => {
+        if (data) {
+          setProducts([...products, {
+            id: products.length + 1,
+            name: name,
+            description,
+          }]);
+          setName("");
+          setDescription("");
+          setValidation("");
+        }
+      })
+      .catch((error) => console.log("error"));
+  
+    /* try{
       const response = await fetch('https://api.learnjavascript.online/demo/react/admin/products', {
             method: 'post',
            headers: {
@@ -59,8 +88,9 @@ const [products, setProducts] = useState(() => {
         }   
         }catch{console.log('error')}
 
-    }
-
+    */
+   
+  }
   
 
   function handleNameChange(event) {
@@ -75,20 +105,25 @@ const [products, setProducts] = useState(() => {
     setProducts(products.filter((product) => product.id !== id));
   }
 
+ 
+   
+  
   return (
     <>
-      <AddProductForm
-        name={name}
-        description={description}
-        validation={validation}
-        onNameChange={handleNameChange}
-        onDescriptionChange={handleDescriptionChange}
-        onFormSubmit={handleFormSubmit}
-      />
-      
-      <div>{products.length === 0 && <p>Add your first product</p>}</div>
+    
+    <AddProductForm
+    name={name}
+    description={description}
+    validation={validation}
+    onNameChange={handleNameChange}
+    onDescriptionChange={handleDescriptionChange}
+    onFormSubmit={handleFormSubmit}
+    />
+    <div>{products.length === 0 && <p>Add your first product</p>}</div>
 
-      <ProductsList products={products} onDeleteClick={handleDeleteClick} />
+     
+
+      <ProductsList loading={loading} products={products} onDeleteClick={handleDeleteClick} />
     </>
   );
 }
