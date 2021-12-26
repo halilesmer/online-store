@@ -1,6 +1,13 @@
-import React from "react";
+import Reac, { useRef, useEffect } from "react";
 
 export default function AddProductForm(props) {
+  const inputNameRef = useRef();
+  const inputDescriptRef = useRef();
+
+  useEffect(() => {
+    inputNameRef.current.focus();
+  });
+
   return (
     <form onSubmit={props.onFormSubmit}>
       <div>
@@ -10,8 +17,9 @@ export default function AddProductForm(props) {
           value={props.name}
           onChange={props.onNameChange}
           id="product-name"
-          placeholder="Enter the name"
           className="textfield"
+          placeholder="Enter the name"
+          ref={inputNameRef}
         />
       </div>
       <div>
